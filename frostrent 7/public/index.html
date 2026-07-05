@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS2 Skin Rental | FrostRent — Rent Knives, Gloves & Rare Skins</title>
+<meta name="description" content="FrostRent is a CS2 skin rental marketplace. Rent knives, gloves, and rare skins by the week, or list your own skins and earn 50% passive income on every rental.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#050912;
+    --abyss:#0A1524;
+    --glacier:#0F2438;
+    --panel:#101E33;
+    --panel-border:#1D3A57;
+    --frost:#4FD8FF;
+    --frost-dim:#2A94B3;
+    --cryo:#8B7CF6;
+    --ice:#EAF6FF;
+    --vapor:#7E93AC;
+    --vapor-dim:#4C6178;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--ice);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+  ::selection{background:var(--frost);color:var(--void);}
+
+  /* Ambient frost orbs */
+  .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.25;pointer-events:none;z-index:0;}
+  .orb1{width:420px;height:420px;background:var(--frost);top:-120px;left:-100px;animation:drift1 22s ease-in-out infinite;}
+  .orb2{width:360px;height:360px;background:var(--cryo);top:40%;right:-140px;animation:drift2 26s ease-in-out infinite;}
+  .orb3{width:300px;height:300px;background:var(--frost-dim);bottom:-100px;left:30%;animation:drift1 30s ease-in-out infinite reverse;}
+  @keyframes drift1{0%,100%{transform:translate(0,0);}50%{transform:translate(40px,60px);}}
+  @keyframes drift2{0%,100%{transform:translate(0,0);}50%{transform:translate(-50px,40px);}}
+
+  /* Nav */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(5,9,18,0.75);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--panel-border);
+  }
+  .navbar{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;}
+  .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;}
+  .logo-mark{width:28px;height:28px;position:relative;flex-shrink:0;}
+  .logo-mark svg{width:100%;height:100%;}
+  .nav-links{display:flex;gap:32px;font-size:14px;font-weight:500;color:var(--vapor);}
+  .nav-links a:hover{color:var(--frost);}
+  .nav-cta{display:flex;gap:12px;align-items:center;}
+  .nav-toggle{
+    display:none;background:none;border:1px solid var(--panel-border);border-radius:8px;
+    width:38px;height:38px;cursor:pointer;flex-direction:column;align-items:center;
+    justify-content:center;gap:4px;
+  }
+  .nav-toggle span{width:18px;height:2px;background:var(--ice);border-radius:2px;transition:all .2s ease;}
+  .nav-toggle.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+  .nav-toggle.open span:nth-child(2){opacity:0;}
+  .nav-toggle.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;
+    cursor:pointer;border:1px solid transparent;transition:all .2s ease;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-primary{background:var(--frost);color:var(--void);}
+  .btn-primary:hover{background:#75E4FF;box-shadow:0 0 24px rgba(79,216,255,0.4);}
+  .btn-ghost{border-color:var(--panel-border);color:var(--ice);}
+  .btn-ghost:hover{border-color:var(--frost);color:var(--frost);}
+  .btn-sm{padding:8px 16px;font-size:13px;}
+  @media(max-width:840px){
+    .nav-links{
+      display:flex;flex-direction:column;gap:0;
+      position:absolute;top:100%;left:0;right:0;
+      background:var(--abyss);border-bottom:1px solid var(--panel-border);
+      max-height:0;overflow:hidden;transition:max-height .25s ease;
+    }
+    .nav-links.open{max-height:220px;}
+    .nav-links a{padding:16px 24px;border-top:1px solid var(--panel-border);}
+    .nav-toggle{display:flex;}
+  }
+
+  /* Hero */
+  .hero{position:relative;z-index:1;padding:96px 24px 80px;text-align:center;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--frost);border:1px solid var(--panel-border);background:rgba(79,216,255,0.06);
+    padding:7px 16px;border-radius:999px;margin-bottom:28px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--frost);box-shadow:0 0 8px var(--frost);}
+  .hero h1{font-size:clamp(38px,6vw,68px);font-weight:700;line-height:1.05;max-width:840px;margin:0 auto 22px;}
+  .hero h1 .accent{color:var(--frost);}
+  .hero p{font-size:18px;color:var(--vapor);max-width:560px;margin:0 auto 40px;}
+  .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:56px;}
+  .trust-line{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;font-size:13px;color:var(--vapor-dim);}
+  .trust-line span{display:flex;align-items:center;gap:8px;}
+  .trust-line svg{width:15px;height:15px;color:var(--frost-dim);}
+
+  /* Section headers */
+  .section{position:relative;z-index:1;padding:88px 24px;}
+  .section-head{max-width:600px;margin-bottom:48px;}
+  .section-eyebrow{font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--cryo);margin-bottom:12px;}
+  .section h2{font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:14px;}
+  .section-head p{color:var(--vapor);font-size:16px;}
+
+  /* Marketplace */
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;}
+  .chip{
+    padding:9px 18px;border-radius:999px;border:1px solid var(--panel-border);
+    font-size:13px;font-weight:600;color:var(--vapor);cursor:pointer;transition:all .2s ease;
+    background:transparent;
+  }
+  .chip.active,.chip:hover{border-color:var(--frost);color:var(--frost);background:rgba(79,216,255,0.06);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+  .card{
+    background:linear-gradient(160deg,var(--panel),var(--glacier));
+    border:1px solid var(--panel-border);border-radius:14px;overflow:hidden;
+    transition:transform .25s ease,border-color .25s ease;position:relative;
+  }
+  .card:hover{transform:translateY(-4px);border-color:var(--frost-dim);}
+  .card-badge{
+    position:absolute;top:14px;left:14px;font-size:11px;font-weight:700;
+    padding:4px 10px;border-radius:6px;letter-spacing:0.04em;text-transform:uppercase;z-index:2;
+  }
+  .badge-featured{background:var(--frost);color:var(--void);}
+  .badge-rare{background:rgba(139,124,246,0.16);color:var(--cryo);border:1px solid rgba(139,124,246,0.4);}
+  .card-art{
+    height:150px;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 30%,rgba(79,216,255,0.14),transparent 70%);
+    border-bottom:1px solid var(--panel-border);
+  }
+  .card-art svg{width:72px;height:72px;color:var(--frost);opacity:0.85;}
+  .card-body{padding:18px 18px 20px;}
+  .card-cat{font-size:11px;color:var(--vapor-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+  .card-name{font-size:15px;font-weight:600;margin-bottom:2px;}
+  .card-wear{font-size:12px;color:var(--vapor);margin-bottom:14px;}
+  .card-float{font-size:12px;color:var(--frost-dim);margin-bottom:14px;}
+  .card-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;}
+  .card-price-label{font-size:11px;color:var(--vapor-dim);margin-bottom:2px;}
+  .card-price{font-size:19px;font-weight:600;}
+  .card-value{font-size:12px;color:var(--vapor);text-align:right;}
+  .card-price-sub{font-size:11px;color:var(--vapor-dim);}
+  .card .btn{width:100%;}
+  .empty-state{
+    grid-column:1/-1;text-align:center;padding:56px 24px;color:var(--vapor);
+    border:1px dashed var(--panel-border);border-radius:14px;
+  }
+  .empty-state svg{width:28px;height:28px;color:var(--frost-dim);margin-bottom:12px;}
+  .empty-state p{font-size:14px;}
+
+  .modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(5,9,18,0.75);backdrop-filter:blur(6px);
+    z-index:100;align-items:center;justify-content:center;padding:24px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--panel);border:1px solid var(--panel-border);border-radius:16px;
+    padding:32px;max-width:380px;width:100%;position:relative;
+  }
+  .modal-box h3{font-size:19px;margin-bottom:10px;}
+  .modal-sub{font-size:13.5px;color:var(--vapor);margin-bottom:18px;}
+  .modal-close{
+    position:absolute;top:16px;right:16px;background:none;border:none;color:var(--vapor);
+    font-size:22px;cursor:pointer;line-height:1;
+  }
+  .modal-total{font-size:14px;color:var(--frost);font-family:'JetBrains Mono',monospace;margin-bottom:16px;}
+  .modal-note{font-size:12px;color:var(--vapor-dim);margin-top:12px;text-align:center;}
+
+  /* Scanner (signature element) */
+  .scanner-section{
+    background:linear-gradient(180deg,transparent,rgba(15,36,56,0.4),transparent);
+  }
+  .scanner-box{
+    max-width:700px;margin:0 auto;background:var(--panel);border:1px solid var(--panel-border);
+    border-radius:18px;padding:36px;position:relative;overflow:hidden;
+  }
+  .scanner-box::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent,rgba(79,216,255,0.05));
+    pointer-events:none;
+  }
+  .scan-input-row{display:flex;gap:10px;margin-bottom:6px;}
+  .scan-input{
+    flex:1;background:var(--abyss);border:1px solid var(--panel-border);border-radius:9px;
+    padding:13px 16px;color:var(--ice);font-size:14px;font-family:'JetBrains Mono',monospace;
+    outline:none;transition:border-color .2s ease;
+  }
+  .scan-input:focus{border-color:var(--frost);}
+  .scan-hint{font-size:12px;color:var(--vapor-dim);margin-bottom:24px;}
+  .scan-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;min-height:0;}
+  .scan-result{
+    background:var(--abyss);border:1px solid var(--panel-border);border-radius:10px;padding:14px;
+    opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease;
+  }
+  .scan-result.show{opacity:1;transform:translateY(0);}
+  .scan-result-name{font-size:13px;font-weight:600;margin-bottom:8px;}
+  .scan-result-stat{display:flex;justify-content:space-between;font-size:11px;color:var(--vapor);margin-bottom:4px;}
+  .scan-result-stat .val{color:var(--frost);font-family:'JetBrains Mono',monospace;}
+  .scan-status{font-size:13px;color:var(--frost-dim);font-family:'JetBrains Mono',monospace;min-height:20px;margin-bottom:16px;}
+  .scan-bar{height:3px;background:var(--abyss);border-radius:99px;overflow:hidden;margin-bottom:24px;display:none;}
+  .scan-bar.active{display:block;}
+  .scan-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--frost),var(--cryo));transition:width 1.8s ease;}
+
+  /* How it works */
+  .tracks{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:760px){.tracks{grid-template-columns:1fr;}}
+  .track{background:var(--panel);border:1px solid var(--panel-border);border-radius:16px;padding:32px;}
+  .track h3{font-size:19px;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+  .track h3 .tag{font-size:11px;padding:4px 10px;border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;}
+  .tag-renter{background:rgba(79,216,255,0.12);color:var(--frost);}
+  .tag-owner{background:rgba(139,124,246,0.14);color:var(--cryo);}
+  .step{display:flex;gap:16px;margin-bottom:22px;}
+  .step:last-child{margin-bottom:0;}
+  .step-num{
+    width:28px;height:28px;border-radius:8px;background:var(--abyss);border:1px solid var(--panel-border);
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+    font-family:'JetBrains Mono',monospace;color:var(--frost);flex-shrink:0;
+  }
+  .step-text{font-size:14px;color:var(--vapor);padding-top:4px;}
+  .step-text strong{color:var(--ice);font-weight:600;}
+
+  /* List your skin */
+  .list-section{
+    background:var(--panel);border:1px solid var(--panel-border);border-radius:20px;
+    padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+  }
+  @media(max-width:800px){.list-section{grid-template-columns:1fr;padding:32px;}}
+  .list-copy h2{font-size:30px;margin-bottom:14px;}
+  .list-copy p{color:var(--vapor);margin-bottom:20px;font-size:15px;}
+  .list-facts{list-style:none;}
+  .list-facts li{display:flex;gap:10px;font-size:14px;color:var(--vapor);margin-bottom:12px;align-items:flex-start;}
+  .list-facts svg{width:16px;height:16px;color:var(--frost);flex-shrink:0;margin-top:2px;}
+  .mock-form{background:var(--abyss);border:1px solid var(--panel-border);border-radius:14px;padding:24px;}
+  .form-label{font-size:12px;font-weight:600;color:var(--vapor);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;display:block;}
+  .form-group{margin-bottom:18px;}
+  .toggle-row{display:flex;gap:8px;}
+  .toggle-opt{
+    flex:1;text-align:center;padding:10px;border-radius:8px;border:1px solid var(--panel-border);
+    font-size:13px;font-weight:600;color:var(--vapor);cursor:pointer;transition:all .2s ease;
+  }
+  .toggle-opt.active{border-color:var(--frost);color:var(--frost);background:rgba(79,216,255,0.06);}
+  .form-note{font-size:12px;color:var(--vapor-dim);margin-top:10px;line-height:1.5;}
+  .list-scan-item{
+    background:var(--panel);border:1px solid var(--panel-border);border-radius:10px;
+    padding:14px;margin-top:12px;
+  }
+  .list-scan-item-name{font-size:13.5px;font-weight:600;margin-bottom:4px;}
+  .list-scan-item-meta{font-size:12px;color:var(--vapor);margin-bottom:10px;}
+  .list-scan-item-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .list-price-label{font-size:11px;color:var(--vapor-dim);margin-right:8px;}
+
+  /* Trust */
+  .trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  @media(max-width:800px){.trust-grid{grid-template-columns:1fr;}}
+  .trust-card{padding:28px;border:1px solid var(--panel-border);border-radius:14px;}
+  .trust-card svg{width:26px;height:26px;color:var(--frost);margin-bottom:16px;}
+  .trust-card h3{font-size:16px;margin-bottom:10px;}
+  .trust-card p{font-size:13.5px;color:var(--vapor);}
+
+  footer{border-top:1px solid var(--panel-border);padding:40px 24px;position:relative;z-index:1;}
+  .footer-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-note{font-size:12.5px;color:var(--vapor-dim);max-width:520px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<nav>
+  <div class="navbar wrap">
+    <div class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" stroke="#4FD8FF" stroke-width="1.6" fill="rgba(79,216,255,0.1)"/><path d="M12 7v10M8 9l8 6M16 9l-8 6" stroke="#4FD8FF" stroke-width="1.3"/></svg>
+      </span>
+      FrostRent
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="#marketplace">Marketplace</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#list-skin">List your skin</a>
+    </div>
+    <div class="nav-cta">
+      <a href="/auth/steam" class="btn btn-ghost btn-sm" id="signInBtn">Sign in</a>
+      <a href="#list-skin" class="btn btn-primary btn-sm">Get started</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="dot"></span>CS2 SKIN RENTAL MARKETPLACE</div>
+    <h1>Experience the luxury of a $3,000 knife — <span class="accent">without the $3,000 price tag.</span></h1>
+    <p>FrostRent lets you rent knives, gloves, and rare skins by the week — starting at $20. Same shine, same envy, none of the commitment.</p>
+    <div class="hero-ctas">
+      <a href="#marketplace" class="btn btn-primary">Browse skins to rent</a>
+      <a href="#list-skin" class="btn btn-ghost">List your skin, earn 50%</a>
+    </div>
+    <div class="trust-line">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Steam trade URL verified</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>Float &amp; wear auto-checked</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Trade-lock protected returns</span>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="marketplace">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">Marketplace</div>
+      <h2>Skins available to rent right now</h2>
+      <p>Every listing shows live float, wear, and Steam market value before you commit.</p>
+    </div>
+    <div class="filters">
+      <div class="chip active" data-filter="all">All</div>
+      <div class="chip" data-filter="knife">Knives</div>
+      <div class="chip" data-filter="glove">Gloves</div>
+      <div class="chip" data-filter="rifle">Rifles</div>
+    </div>
+    <div class="grid" id="grid">
+      <!-- cards injected by JS -->
+    </div>
+  </div>
+</section>
+
+<section class="section scanner-section">
+  <div class="wrap">
+    <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center;">
+      <div class="section-eyebrow" style="text-align:center;">Inventory scanner</div>
+      <h2>Paste a trade URL. We read the float.</h2>
+      <p style="margin:0 auto;">Owners connect their Steam trade URL once — FrostRent scans wear, float, and current market value automatically to suggest a rental price.</p>
+    </div>
+    <div class="scanner-box">
+      <div class="scan-input-row">
+        <input class="scan-input" id="scanInput" placeholder="https://steamcommunity.com/tradeoffer/new/?partner=...&token=..." />
+        <button class="btn btn-primary" id="scanBtn">Scan inventory</button>
+      </div>
+      <div class="scan-hint">Demo scan — connect your real trade URL after signing in to list live.</div>
+      <div class="scan-bar" id="scanBar"><div class="scan-bar-fill" id="scanBarFill"></div></div>
+      <div class="scan-status" id="scanStatus"></div>
+      <div class="scan-results" id="scanResults"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how-it-works">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">How it works</div>
+      <h2>Two ways to use FrostRent</h2>
+    </div>
+    <div class="tracks">
+      <div class="track">
+        <h3><span class="tag tag-renter">Renter</span>Rent a skin</h3>
+        <div class="step"><div class="step-num">1</div><div class="step-text">Browse the marketplace and filter by type, float, or price.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Pay the weekly rate — <strong>shown up front, no hidden fees.</strong></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">The skin is traded to your inventory and <strong>trade-locked to you</strong> for the rental period.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Play, showcase, and trade it in matches for the full rental window.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text">When the rental ends, we <strong>automatically send a return request</strong> — accept it and your deposit is refunded, easy.</div></div>
+      </div>
+      <div class="track">
+        <h3><span class="tag tag-owner">Owner</span>List a skin</h3>
+        <div class="step"><div class="step-num">1</div><div class="step-text">Connect your Steam trade URL — <strong>read-only, we never ask for your password.</strong></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">We scan your inventory, read float values, and estimate market value automatically.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Any item worth <strong>$80+</strong> can be listed to rent, sell, or both.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Approve incoming rental requests — the skin is only sent once payment clears.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text">Earn <strong>50% of every rental</strong>. The skin is returned to you automatically when each rental period ends.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="list-skin">
+  <div class="wrap">
+    <div class="list-section">
+      <div class="list-copy">
+        <div class="section-eyebrow">List your skin</div>
+        <h2>Your inventory, working for you.</h2>
+        <p>Got a knife or glove sitting untouched? List it once and earn every time someone rents it — no extra effort after setup.</p>
+        <ul class="list-facts">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Minimum listing value: <strong>&nbsp;$80 or more</strong></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>You keep <strong>&nbsp;50% of every rental payment</strong></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>List to rent, sell, or both — your choice, per item</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Float and wear are read automatically from your trade URL</li>
+        </ul>
+      </div>
+      <div class="mock-form">
+        <div class="form-group">
+          <label class="form-label">Steam trade URL</label>
+          <input class="scan-input" style="width:100%;" id="listTradeUrlInput" placeholder="Paste your trade URL" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">List this account to</label>
+          <div class="toggle-row">
+            <div class="toggle-opt" data-toggle="rent">Rent</div>
+            <div class="toggle-opt active" data-toggle="both">Both</div>
+            <div class="toggle-opt" data-toggle="sell">Sell</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" id="listScanBtn">Connect &amp; scan inventory</button>
+        <div class="form-note" id="listFormNote">Only items valued at $80+ are eligible to list. Everything below that stays private in your inventory.</div>
+        <div id="listScanResults"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">Why it's safe</div>
+      <h2>Ownership never actually changes hands</h2>
+      <p>Rentals run on Steam's own trade-lock system, not trust.</p>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <h3>Trade-lock protected</h3>
+        <p>Every rented item is locked to the renter's account for the rental duration — it can't be resold or traded away while it's rented. When time's up, a return request is sent automatically — accept it, done.</p>
+      </div>
+      <div class="trust-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <h3>Paid before it moves</h3>
+        <p>Skins are only sent once the rental payment clears — owners never send an item on trust, and renters never pay for a skin that doesn't arrive.</p>
+      </div>
+      <div class="trust-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-4z"/></svg>
+        <h3>Read-only account access</h3>
+        <p>We only ever need your trade URL to scan and move items — never your Steam password or Steam Guard codes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <div class="logo" style="font-size:16px;">
+      <span class="logo-mark" style="width:22px;height:22px;">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" stroke="#4FD8FF" stroke-width="1.6" fill="rgba(79,216,255,0.1)"/></svg>
+      </span>
+      FrostRent
+    </div>
+    <div class="footer-note">FrostRent is an independent CS2 skin rental marketplace and is not affiliated with, endorsed by, or associated with Valve Corporation or Steam.<br><span style="opacity:0.4;">Build v6 — PromptPay + Steam login</span></div>
+  </div>
+</footer>
+
+<script>
+  const skins = [
+    {name:'★ Falchion Knife | Lore', wear:'Field-Tested', cat:'knife', float:'0.2183', value:140, price:7, badge:'featured', badgeText:'Currently Available'},
+  ];
+
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.getElementById('navToggle').classList.toggle('open');
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  document.querySelectorAll('#navLinks a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('navToggle').classList.remove('open');
+      document.getElementById('navLinks').classList.remove('open');
+    });
+  });
+
+  // Real Steam sign-in state — reflects whether /auth/steam actually logged you in.
+  (async function checkAuth(){
+    try{
+      const res = await fetch('/api/me');
+      if(res.ok){
+        const me = await res.json();
+        const btn = document.getElementById('signInBtn');
+        btn.textContent = me.displayName ? `Hi, ${me.displayName}` : 'Account';
+        btn.href = '/auth/logout';
+      }
+    }catch(e){ /* not signed in, leave button as-is */ }
+  })();
+
+  // Pressing Enter in a trade URL field should do the same thing as
+  // clicking its button — was a real dead end before.
+  function enterSubmits(inputId, buttonId){
+    const input = document.getElementById(inputId);
+    if(!input) return;
+    input.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        document.getElementById(buttonId).click();
+      }
+    });
+  }
+
+  const iconPath = '<path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z"/><path d="M5 15l.8 2.4L8 18l-2.2.6L5 21l-.8-2.4L2 18l2.2-.6L5 15z"/><path d="M19 15l.8 2.4L22 18l-2.2.6L19 21l-.8-2.4L16 18l2.2-.6L19 15z"/>';
+
+  // Live listings from the backend replace the demo array once loaded.
+  // Falls back to demo data automatically if the API has no listings yet
+  // (e.g. fresh install, no .env keys configured) so the page still works.
+  // Mirrors services/currency.js on the backend — display-only estimate.
+  const USD_TO_THB = 33.5;
+
+  let liveSkins = null;
+
+  function classify(name){
+    if (/glove/i.test(name)) return 'glove';
+    if (/knife|karambit|bayonet|dagger|falchion|butterfly/i.test(name)) return 'knife';
+    return 'rifle';
+  }
+
+  async function loadLiveListings(){
+    try{
+      const res = await fetch('/api/listings');
+      if(!res.ok) return;
+      const rows = await res.json();
+      if(Array.isArray(rows) && rows.length){
+        liveSkins = rows.map(r => ({
+          id: r.id,
+          name: r.market_hash_name,
+          wear: r.wear || '—',
+          cat: classify(r.market_hash_name),
+          float: r.float_value != null ? Number(r.float_value).toFixed(4) : 'N/A',
+          value: r.estimated_value,
+          price: r.rent_price_7d,
+          priceThb: r.rent_price_7d_thb,
+          valueThb: Math.round(r.estimated_value * USD_TO_THB),
+          badge: null,
+        }));
+        renderGrid(document.querySelector('.chip.active')?.dataset.filter || 'all');
+      }
+    }catch(e){ /* stay on demo data */ }
+  }
+
+  function renderGrid(filter){
+    const grid = document.getElementById('grid');
+    const source = liveSkins || skins;
+    grid.innerHTML = '';
+    const filtered = source.filter(s => filter === 'all' || s.cat === filter);
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z"/></svg>
+        <p>No ${filter === 'all' ? '' : filter + ' '}listings yet — check back soon as more skins get added.</p>
+      </div>`;
+      return;
+    }
+
+    filtered.forEach(s => {
+        const priceThb = s.priceThb || Math.round(s.price * USD_TO_THB);
+        const valueThb = s.valueThb || Math.round(s.value * USD_TO_THB);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          ${s.badge ? `<div class="card-badge ${s.badge === 'featured' ? 'badge-featured' : 'badge-rare'}">${s.badgeText}</div>` : ''}
+          <div class="card-art"><svg viewBox="0 0 24 24" fill="currentColor">${iconPath}</svg></div>
+          <div class="card-body">
+            <div class="card-cat">${s.cat}</div>
+            <div class="card-name">${s.name}</div>
+            <div class="card-wear">${s.wear}</div>
+            <div class="card-float mono">Float ${s.float}</div>
+            <div class="card-row">
+              <div>
+                <div class="card-price-label">Per 7 days</div>
+                <div class="card-price mono">฿${priceThb.toLocaleString()}</div>
+                <div class="card-price-sub mono">≈ $${s.price}</div>
+              </div>
+              <div class="card-value">Value<br><strong>฿${valueThb.toLocaleString()}</strong><br><span class="card-price-sub">≈ $${s.value.toLocaleString()}</span></div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openRentModal(${s.id ?? 'null'}, '${s.name.replace(/'/g, "\\'")}', ${priceThb}, ${valueThb})">Rent this skin</button>
+          </div>`;
+        grid.appendChild(card);
+      });
+  }
+  renderGrid('all');
+
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      renderGrid(chip.dataset.filter);
+    });
+  });
+
+  document.querySelectorAll('[data-toggle]').forEach(opt => {
+    opt.addEventListener('click', () => {
+      opt.parentElement.querySelectorAll('.toggle-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+    });
+  });
+
+  // Scanner demo
+  const scanBtn = document.getElementById('scanBtn');
+  const scanStatus = document.getElementById('scanStatus');
+  const scanResults = document.getElementById('scanResults');
+  const scanBar = document.getElementById('scanBar');
+  const scanBarFill = document.getElementById('scanBarFill');
+  const demoItems = [
+    {name:'★ Falchion Knife | Lore (FT)', float:'0.2183', value:'$140'},
+    {name:'AK-47 | Fire Serpent (MW)', float:'0.1187', value:'$310'},
+    {name:'Moto Gloves | Turtle (FN)', float:'0.0342', value:'$275'},
+  ];
+
+  function showScanItems(items){
+    scanResults.innerHTML = '';
+    items.forEach((item, i) => {
+      const el = document.createElement('div');
+      el.className = 'scan-result';
+      el.innerHTML = `
+        <div class="scan-result-name">${item.name}</div>
+        <div class="scan-result-stat"><span>Float</span><span class="val">${item.float}</span></div>
+        <div class="scan-result-stat"><span>Est. value</span><span class="val">${item.value}</span></div>`;
+      scanResults.appendChild(el);
+      setTimeout(() => el.classList.add('show'), i * 120);
+    });
+  }
+
+  scanBtn.addEventListener('click', async () => {
+    const tradeUrl = scanInput.value.trim();
+    scanResults.innerHTML = '';
+    scanBar.classList.add('active');
+    scanBarFill.style.width = '0%';
+    scanBtn.disabled = true;
+    scanStatus.textContent = 'Connecting to Steam trade URL...';
+    setTimeout(() => { scanBarFill.style.width = '45%'; scanStatus.textContent = 'Reading inventory items...'; }, 200);
+    setTimeout(() => { scanBarFill.style.width = '80%'; scanStatus.textContent = 'Checking float values & market price...'; }, 1100);
+
+    // Real trade URL entered -> hit the actual backend + CSFloat pipeline.
+    if (tradeUrl.includes('partner=') && tradeUrl.includes('token=')) {
+      try {
+        const res = await fetch('/api/inventory/scan', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ tradeUrl }),
+        });
+        const data = await res.json();
+        setTimeout(() => {
+          scanBarFill.style.width = '100%';
+          if (!res.ok) {
+            scanStatus.textContent = `Scan failed: ${data.error}`;
+            scanBtn.disabled = false;
+            return;
+          }
+          scanStatus.textContent = `Scan complete — ${data.eligibleCount} items eligible to list.`;
+          showScanItems(data.items.map(it => ({
+            name: it.marketHashName,
+            float: it.floatValue != null ? Number(it.floatValue).toFixed(4) : 'N/A',
+            value: `$${it.estimatedValue}`,
+          })));
+          scanBtn.disabled = false;
+        }, 2000);
+      } catch (e) {
+        scanStatus.textContent = 'Could not reach the backend — is the server running?';
+        scanBtn.disabled = false;
+      }
+      return;
+    }
+
+    // No real trade URL yet -> demo preview so the page still feels alive.
+    setTimeout(() => {
+      scanBarFill.style.width = '100%';
+      scanStatus.textContent = `Demo scan — paste a real trade URL above to scan live. ${demoItems.length} example items shown.`;
+      showScanItems(demoItems);
+      scanBtn.disabled = false;
+    }, 2000);
+  });
+
+  enterSubmits('scanInput', 'scanBtn');
+  enterSubmits('listTradeUrlInput', 'listScanBtn');
+  enterSubmits('rentTradeUrlInput', 'rentGetQrBtn');
+
+  loadLiveListings();
+
+  // --- Rent modal (PromptPay flow) ---
+  let currentRentListing = null;
+
+  window.openRentModal = function(listingId, name, priceThb, valueThb){
+    currentRentListing = { listingId, name, priceThb, valueThb };
+    document.getElementById('rentModal').classList.add('open');
+    document.getElementById('rentModalStep1').style.display = 'block';
+    document.getElementById('rentModalStep2').style.display = 'none';
+    document.getElementById('rentModalStep3').style.display = 'none';
+    document.getElementById('rentModalTitle').textContent = `Rent ${name}`;
+    document.getElementById('rentModalError').textContent = '';
+    document.getElementById('rentTradeUrlInput').value = '';
+    if (listingId == null) {
+      document.getElementById('rentModalTotal').textContent = '';
+      document.getElementById('rentModalError').textContent = 'This is a demo listing — list a real item first to enable renting.';
+      document.getElementById('rentGetQrBtn').disabled = true;
+    } else {
+      document.getElementById('rentModalTotal').textContent = `Rent ฿${priceThb.toLocaleString()} + refundable deposit ฿${valueThb.toLocaleString()}`;
+      document.getElementById('rentGetQrBtn').disabled = false;
+    }
+  };
+
+  function closeRentModal(){
+    document.getElementById('rentModal').classList.remove('open');
+  }
+  document.getElementById('rentModalClose').addEventListener('click', closeRentModal);
+  document.getElementById('rentModal').addEventListener('click', (e) => {
+    if (e.target.id === 'rentModal') closeRentModal();
+  });
+
+  document.getElementById('rentGetQrBtn').addEventListener('click', async () => {
+    const tradeUrl = document.getElementById('rentTradeUrlInput').value.trim();
+    const errEl = document.getElementById('rentModalError');
+    if (!tradeUrl.includes('partner=') || !tradeUrl.includes('token=')) {
+      errEl.textContent = 'That doesn\'t look like a valid Steam trade URL.';
+      return;
+    }
+    errEl.textContent = '';
+    const btn = document.getElementById('rentGetQrBtn');
+    btn.disabled = true;
+    btn.textContent = 'Generating QR...';
+    try {
+      const res = await fetch('/api/rentals/promptpay', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ listingId: currentRentListing.listingId, renterTradeUrl: tradeUrl }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        errEl.textContent = data.error || 'Something went wrong.';
+        btn.disabled = false;
+        btn.textContent = 'Get PromptPay QR';
+        return;
+      }
+      document.getElementById('rentQrImg').src = data.qrCodeDataUrl;
+      document.getElementById('rentQrAmount').textContent = `฿${data.totalThb.toLocaleString()} total`;
+      document.getElementById('rentModalStep1').style.display = 'none';
+      document.getElementById('rentModalStep2').style.display = 'block';
+    } catch (e) {
+      errEl.textContent = 'Could not reach the server — is it running?';
+      btn.disabled = false;
+      btn.textContent = 'Get PromptPay QR';
+    }
+  });
+
+  document.getElementById('rentPaidBtn').addEventListener('click', () => {
+    document.getElementById('rentModalStep2').style.display = 'none';
+    document.getElementById('rentModalStep3').style.display = 'block';
+  });
+
+  // --- List-your-skin form: real scan -> pick price -> create listing ---
+  let scannedItemsCache = [];
+
+  document.getElementById('listScanBtn').addEventListener('click', async () => {
+    const tradeUrl = document.getElementById('listTradeUrlInput').value.trim();
+    const note = document.getElementById('listFormNote');
+    const resultsEl = document.getElementById('listScanResults');
+    if (!tradeUrl.includes('partner=') || !tradeUrl.includes('token=')) {
+      note.textContent = "That doesn't look like a valid Steam trade URL.";
+      return;
+    }
+    const btn = document.getElementById('listScanBtn');
+    btn.disabled = true;
+    btn.textContent = 'Scanning...';
+    note.textContent = '';
+    resultsEl.innerHTML = '';
+
+    try {
+      const res = await fetch('/api/inventory/scan', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ tradeUrl }),
+      });
+      const data = await res.json();
+      btn.disabled = false;
+      btn.textContent = 'Connect & scan inventory';
+
+      if (!res.ok) {
+        note.textContent = data.error || 'Scan failed.';
+        return;
+      }
+      if (!data.items.length) {
+        note.textContent = 'No items worth $80+ found in this inventory.';
+        return;
+      }
+
+      scannedItemsCache = data.items;
+      resultsEl.innerHTML = data.items.map((item, i) => `
+        <div class="list-scan-item">
+          <div class="list-scan-item-name">${item.marketHashName}</div>
+          <div class="list-scan-item-meta">Est. value $${item.estimatedValue} · Float ${item.floatValue ?? 'N/A'}</div>
+          <div class="list-scan-item-row">
+            <input type="number" class="scan-input list-price-input" id="price-usd-${i}" value="${item.suggestedRent7d}" style="width:90px;" />
+            <span class="list-price-label">USD/wk</span>
+            <input type="number" class="scan-input list-price-input" id="price-thb-${i}" value="${Math.round(item.suggestedRent7d * USD_TO_THB)}" style="width:90px;" />
+            <span class="list-price-label">THB/wk</span>
+          </div>
+          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px;" onclick="submitListing(${i}, '${tradeUrl.replace(/'/g, "\\'")}')">List this item</button>
+        </div>
+      `).join('');
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Connect & scan inventory';
+      note.textContent = 'Could not reach the server — is it running?';
+    }
+  });
+
+  window.submitListing = async function(i, tradeUrl){
+    const item = scannedItemsCache[i];
+    const rentPrice7d = Number(document.getElementById(`price-usd-${i}`).value);
+    const rentPrice7dThb = Number(document.getElementById(`price-thb-${i}`).value);
+    const listType = document.querySelector('.toggle-opt.active')?.dataset.toggle || 'both';
+    const note = document.getElementById('listFormNote');
+
+    try {
+      // Ensure a user record exists for this owner (same trade-URL identity pattern as renters).
+      const ownerRes = await fetch('/api/owners/from-trade-url', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ tradeUrl }),
+      });
+      const owner = await ownerRes.json();
+      if (!ownerRes.ok) { note.textContent = owner.error; return; }
+
+      const res = await fetch('/api/listings', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          ownerId: owner.id,
+          assetId: item.assetId,
+          marketHashName: item.marketHashName,
+          wear: item.wearName,
+          floatValue: item.floatValue,
+          estimatedValue: item.estimatedValue,
+          listType, rentPrice7d, rentPrice7dThb,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { note.textContent = data.error; return; }
+      note.textContent = `Listed! It'll show up in the marketplace now.`;
+      loadLiveListings();
+    } catch (e) {
+      note.textContent = 'Could not reach the server — is it running?';
+    }
+  };
+</script>
+
+<div class="modal-overlay" id="rentModal">
+  <div class="modal-box">
+    <button class="modal-close" id="rentModalClose">&times;</button>
+    <div id="rentModalStep1">
+      <h3 id="rentModalTitle">Rent this skin</h3>
+      <p class="modal-sub">Enter your Steam trade URL so we know where to send it once payment's confirmed.</p>
+      <input class="scan-input" style="width:100%;margin-bottom:14px;" id="rentTradeUrlInput" placeholder="https://steamcommunity.com/tradeoffer/new/?partner=...&token=..." />
+      <div class="modal-total" id="rentModalTotal"></div>
+      <button class="btn btn-primary" style="width:100%;" id="rentGetQrBtn">Get PromptPay QR</button>
+      <p class="modal-note" id="rentModalError"></p>
+    </div>
+    <div id="rentModalStep2" style="display:none;text-align:center;">
+      <h3>Scan to pay</h3>
+      <img id="rentQrImg" alt="PromptPay QR code" style="width:220px;height:220px;border-radius:12px;margin:16px auto;display:block;" />
+      <div class="modal-total" id="rentQrAmount"></div>
+      <p class="modal-note">Scan with any Thai banking app. Includes rent + refundable deposit.</p>
+      <button class="btn btn-primary" style="width:100%;margin-top:14px;" id="rentPaidBtn">I've sent the payment</button>
+    </div>
+    <div id="rentModalStep3" style="display:none;text-align:center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#4FD8FF" stroke-width="1.6" style="width:40px;height:40px;margin:0 auto 16px;"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+      <h3>Thanks — hang tight</h3>
+      <p class="modal-note">We'll confirm your payment landed and send the skin to your Steam account shortly.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
